@@ -1,118 +1,97 @@
+import "./app.scss";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "react-hot-toast";
-import { RecoilRoot } from "recoil";
-import { Navbar, PrivateRoute } from "./components";
+import React from "react";
+import Navbar from "./components/navbar/Navbar";
+import Footer from "./components/footer/Footer";
+import Home from "./pages/home/Home";
+import Gigs from "./pages/gigs/Gigs";
+import Gig from "./pages/gig/Gig";
+import Login from "./pages/login/Login";
+import Register from "./pages/register/Register";
+import Add from "./pages/add/Add";
+import Orders from "./pages/orders/Orders";
+import Messages from "./pages/messages/Messages";
+import Message from "./pages/message/Message";
+import MyGigs from "./pages/myGigs/MyGigs";
 import {
-  Home,
-  Footer,
-  Gig,
-  Gigs,
-  MyGigs,
-  Add,
-  Orders,
-  Message,
-  Messages,
-  Login,
-  Register,
-  Pay,
-  Success,
-  NotFound,
-} from "./pages";
-import "./App.scss";
-
-const paths = [
-  { path: "/", element: <Home /> },
-  { path: "/gig/:_id", element: <Gig /> },
-  { path: "/gigs", element: <Gigs /> },
-  { path: "/login", element: <Login /> },
-  { path: "/register", element: <Register /> },
-  {
-    path: "/orders",
-    element: (
-      <PrivateRoute>
-        <Orders />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/organize",
-    element: (
-      <PrivateRoute>
-        <Add />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/my-gigs",
-    element: (
-      <PrivateRoute>
-        <MyGigs />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/message/:conversationID",
-    element: (
-      <PrivateRoute>
-        <Message />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/messages",
-    element: (
-      <PrivateRoute>
-        <Messages />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/pay/:_id",
-    element: (
-      <PrivateRoute>
-        <Pay />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/success",
-    element: (
-      <PrivateRoute>
-        <Success />
-      </PrivateRoute>
-    ),
-  },
-  { path: "*", element: <NotFound /> },
-];
-
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
+import Pay from "./pages/pay/Pay";
+import Success from "./pages/success/Success";
 function App() {
   const queryClient = new QueryClient();
+
   const Layout = () => {
     return (
-      <QueryClientProvider client={queryClient}>
-        <Navbar />
-        <Outlet />
-        <Footer />
-      </QueryClientProvider>
+      <div className="app">
+        <QueryClientProvider client={queryClient}>
+          <Navbar />
+          <Outlet />
+          <Footer />
+        </QueryClientProvider>
+      </div>
     );
   };
+
   const router = createBrowserRouter([
     {
       path: "/",
       element: <Layout />,
-      children: paths.map(({ path, element }) => ({ path, element })),
+      children: [
+        {
+          path: "/",
+          element: <Home />,
+        },
+        {
+          path: "/gigs",
+          element: <Gigs />,
+        },
+        {
+          path: "/myGigs",
+          element: <MyGigs />,
+        },
+        {
+          path: "/orders",
+          element: <Orders />,
+        },
+        {
+          path: "/messages",
+          element: <Messages />,
+        },
+        {
+          path: "/message/:id",
+          element: <Message />,
+        },
+        {
+          path: "/add",
+          element: <Add />,
+        },
+        {
+          path: "/gig/:id",
+          element: <Gig />,
+        },
+        {
+          path: "/register",
+          element: <Register />,
+        },
+        {
+          path: "/login",
+          element: <Login />,
+        },
+        {
+          path: "/pay/:id",
+          element: <Pay />,
+        },
+        {
+          path: "/success",
+          element: <Success />,
+        },
+      ],
     },
   ]);
 
-  return (
-    <div className="App">
-      <RecoilRoot>
-        <RouterProvider router={router} />
-        <Toaster />
-      </RecoilRoot>
-    </div>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;

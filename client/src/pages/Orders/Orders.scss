@@ -1,65 +1,55 @@
 .orders {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
+  color: #555;
 
-    .loader {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+  .container {
+    width: 1400px;
+    padding: 50px 0px;
+
+    .title {
+      display: flex;
+      justify-content: space-between;
+
+      button {
+        background-color: #1dbf73;
+        color: white;
+        font-weight: 500;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+      }
     }
 
-    .container {
-        width: 75%;
-        margin: auto;
-        padding: 50px 0px;
-        overflow-x: scroll;
-        
-        &::-webkit-scrollbar {
-            display: none;
+    table {
+      width: 100%;
+
+      tr {
+        height: 50px;
+        th {
+          text-align: left;
         }
-        
-        .title {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        td {
+          
+          sup{
+            font-size: 12px;
+          }
+
+          .image {
+            width: 50px;
+            height: 25px;
+            object-fit: cover;
+          }
+
+          .message {
+            width: 25px;
+            cursor: pointer;
+          }
         }
-        
-        table {
-            min-width: 100%;
-            margin: auto;
-
-            tr {
-                height: 50px;
-
-                th {
-                    text-align: left;
-                }
-
-                td {
-                    img {
-                        width: 100px;
-                        height: 100px;
-                        object-fit: contain;
-                    }
-                    padding: 0 10px;
-                }
-
-                .message {
-                    width: 30px;
-                    height: 30px;
-                    // border-radius: 50%;
-                    cursor: pointer; 
-                }
-
-                &:nth-child(even) {
-                    background-color: #00ff620f;
-                }
-            }
+        &:nth-child(even) {
+          background-color: #1dbf730f;
         }
-
-        @media screen and (max-width: 900px) {
-            width: 90%;
-        }
+      }
     }
+  }
 }

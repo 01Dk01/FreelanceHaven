@@ -1,17 +1,16 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   PaymentElement,
   LinkAuthenticationElement,
   useStripe,
-  useElements
+  useElements,
 } from "@stripe/react-stripe-js";
-import './CheckoutForm.scss';
 
 const CheckoutForm = () => {
   const stripe = useStripe();
   const elements = useElements();
 
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -20,7 +19,9 @@ const CheckoutForm = () => {
       return;
     }
 
-    const clientSecret = new URLSearchParams(window.location.search).get("payment_intent_client_secret");
+    const clientSecret = new URLSearchParams(window.location.search).get(
+      "payment_intent_client_secret"
+    );
 
     if (!clientSecret) {
       return;
@@ -44,8 +45,8 @@ const CheckoutForm = () => {
     });
   }, [stripe]);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
     if (!stripe || !elements) {
       // Stripe.js has not yet loaded.
@@ -59,7 +60,7 @@ const CheckoutForm = () => {
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: `${window.location.origin}/success`,
+        return_url: "http://localhost:5173/success",
       },
     });
 
@@ -75,14 +76,14 @@ const CheckoutForm = () => {
     }
 
     setIsLoading(false);
-  }
+  };
 
   const paymentElementOptions = {
-    layout: "tabs"
-  }
+    layout: "tabs",
+  };
 
   return (
-    <form className='payment-form' id="payment-form" onSubmit={handleSubmit}>
+    <form id="payment-form" onSubmit={handleSubmit}>
       <LinkAuthenticationElement
         id="link-authentication-element"
         onChange={(e) => setEmail(e.target.value)}
@@ -96,7 +97,7 @@ const CheckoutForm = () => {
       {/* Show any error or success messages */}
       {message && <div id="payment-message">{message}</div>}
     </form>
-  )
-}
+  );
+};
 
-export default CheckoutForm
+export default CheckoutForm;

@@ -1,23 +1,19 @@
-import { Link } from 'react-router-dom';
-import './ProjectCard.scss';
+import React from "react";
+import "./ProjectCard.scss";
 
-const ProjectCard = (props) => {
-  const { data } = props;
-
+function ProjectCard({ card }) {
   return (
-    <Link className='link' to='/'>
-        <div className='projectContainer'>
-            <img src={data.img} alt={data.title} />
-            <div className="info">
-              <img src={data.pp} alt={data.title} />
-              <div className="text">
-                <h2>{data.cat}</h2>
-                <span>{data.username}</span>
-              </div>
-            </div>
+    <div className="projectCard">
+      <img src={card.img} alt="" />
+      <div className="info">
+        <img src={card.pp} alt="" />
+        <div className="texts">
+          <h2>{card.cat}</h2>
+          <span>{card.username}</span>
         </div>
-    </Link>
-  )
+      </div>
+    </div>
+  );
 }
 
-export default ProjectCard
+export default ProjectCard;

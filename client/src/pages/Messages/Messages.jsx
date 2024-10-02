@@ -1,92 +1,85 @@
-import moment from 'moment';
-import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
-import { axiosFetch } from '../../utils';
-import { useRecoilValue } from 'recoil';
-import { userState } from '../../atoms';
-import { Loader } from '../../components';
-import './Messages.scss';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import React from "react";
+import { Link } from "react-router-dom";
+import newRequest from "../../utils/newRequest";
+import "./Messages.scss";
+import moment from "moment";
 
 const Messages = () => {
-  const user = useRecoilValue(userState);
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
   const queryClient = useQueryClient();
 
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [])
-
   const { isLoading, error, data } = useQuery({
-    queryKey: ['conversations'],
+    queryKey: ["conversations"],
     queryFn: () =>
-      axiosFetch.get('/conversations')
-        .then(({ data }) => {
-          return data;
-        })
-        .catch(({ response }) => {
-          console.log(response);
-        })
-  })
+      newRequest.get(`/conversations`).then((res) => {
+        return res.data;
+      }),
+  });
 
   const mutation = useMutation({
-    mutationFn: (id) =>
-      axiosFetch.patch(`/conversations/${id}`)
-    ,
-    onSuccess: () =>
-      queryClient.invalidateQueries(['conversations'])
-  })
+    mutationFn: (id) => {
+      return newRequest.put(`/conversations/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["conversations"]);
+    },
+  });
 
-  const handleMessageRead = (id) => {
+  const handleRead = (id) => {
     mutation.mutate(id);
-  }
+  };
 
   return (
-    <div className='messages'>
-      <div className="container">
-        <div className="title">
-          <h1>Messages</h1>
+    <div className="messages">
+      {isLoading ? (
+        "loading"
+      ) : error ? (
+        "error"
+      ) : (
+        <div className="container">
+          <div className="title">
+            <h1>Messages</h1>
+          </div>
+          <table>
+            <tr>
+              <th>{currentUser.isSeller ? "Buyer" : "Seller"}</th>
+              <th>Last Message</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+            {data.map((c) => (
+              <tr
+                className={
+                  ((currentUser.isSeller && !c.readBySeller) ||
+                    (!currentUser.isSeller && !c.readByBuyer)) &&
+                  "active"
+                }
+                key={c.id}
+              >
+                <td>{currentUser.isSeller ? c.buyerId : c.sellerId}</td>
+                <td>
+                  <Link to={`/message/${c.id}`} className="link">
+                    {c?.lastMessage?.substring(0, 100)}...
+                  </Link>
+                </td>
+                <td>{moment(c.updatedAt).fromNow()}</td>
+                <td>
+                  {((currentUser.isSeller && !c.readBySeller) ||
+                    (!currentUser.isSeller && !c.readByBuyer)) && (
+                    <button onClick={() => handleRead(c.id)}>
+                      Mark as Read
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </table>
         </div>
-        {
-          isLoading
-            ? <div className='loader'> <Loader /> </div>
-            : error
-              ? 'Something went wrong!'
-              : <table>
-                <thead>
-                  <tr>
-                    <th>{user.isSeller ? 'Buyer' : 'Seller'}</th>
-                    <th>Last Message</th>
-                    <th>Date</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {
-                    data.map((conv) => (
-                      <tr key={conv._id} className={((user.isSeller && !conv.readBySeller) || (!user.isSeller && !conv.readByBuyer)) &&
-                        "active" || ''}>
-                        <td>{user.isSeller ? conv.buyerID.username : conv.sellerID.username}</td>
-                        <td>
-                          <Link className='link' to={`/message/${conv.conversationID}`}>
-                            {conv?.lastMessage?.slice(0, 100)}...
-                          </Link>
-                        </td>
-                        <td>{moment(conv.updatedAt).fromNow()}</td>
-                        <td>
-                          {
-                            ((user.isSeller && !conv.readBySeller) || (!user.isSeller && !conv.readByBuyer)) &&
-                            (<button onClick={() => handleMessageRead(conv.conversationID)}>Mark as read</button>)
-                          }
-                        </td>
-                      </tr>
-                    ))
-                  }
-                </tbody>
-              </table>
-        }
-      </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default Messages
+export default Messages;
