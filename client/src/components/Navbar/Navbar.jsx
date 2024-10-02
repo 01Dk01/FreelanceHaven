@@ -39,9 +39,8 @@ function Navbar() {
       <div className="container">
         <div className="logo">
           <Link className="link" to="/">
-            <span className="text">fiverr</span>
+            <img src="../../public/img/Logo.png" alt="Freelance Haven" height="40px" />
           </Link>
-          <span className="dot">.</span>
         </div>
         <div className="links">
           <span>Fiverr Business</span>

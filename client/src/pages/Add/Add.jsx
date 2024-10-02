@@ -51,13 +51,17 @@ const Add = () => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: (gig) => {
-      return newRequest.post("/gigs", gig);
-    },
+    mutationFn: (gig) => newRequest.post("/gigs", gig),
     onSuccess: () => {
       queryClient.invalidateQueries(["myGigs"]);
+      navigate("/mygigs"); // Moved inside onSuccess
     },
+    onError: (error) => {
+      console.error('Error when posting gig:', error);
+      alert('Failed to create gig: ' + error.message); // Display error message to the user
+    }
   });
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -131,7 +135,7 @@ const Add = () => {
               cols="30"
               rows="10"
             ></textarea>
-            <label htmlFor="">Delivery Time (e.g. 3 days)</label>
+            <label htmlFor="">Delivery Timee.g. 3 days</label>
             <input type="number" name="deliveryTime" onChange={handleChange} />
             <label htmlFor="">Revision Number</label>
             <input
